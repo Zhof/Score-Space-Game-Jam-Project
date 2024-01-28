@@ -10,6 +10,10 @@ public class BlockCellDeath : MonoBehaviour
     float timeIntoAnim;
     bool animating;
 
+    //The secondary cell is the one which just handles itself, doesn't worry about instantiating the new cell.
+    bool secondaryCell;
+
+    Transform newCellTransform;
 
     BlockCellSplit blockCellSplit;
 
@@ -26,7 +30,6 @@ public class BlockCellDeath : MonoBehaviour
         }
     }
 
-    Vector2 positionAtAnimStart = new Vector2();
     private void Update()
     {
         if(animating == false)
@@ -37,21 +40,46 @@ public class BlockCellDeath : MonoBehaviour
         {
             if(timeIntoAnim >= 1)
             {
-                //destroy this one
+                //Animations ended
+                newCellTransform.gameObject.GetComponent<BoxCollider2D>().enabled = true;
+                newCellTransform.gameObject.GetComponent<SpriteRenderer>().enabled = true;
+
+                Destroy(gameObject);
             }
-            
+            else
+            {
+                timeIntoAnim += Time.deltaTime * (1 / timeToFinishAnim);
+
+                transform.position = new Vector3(Mathf.Lerp(originalPosition.x, newCellTransform.position.x, timeIntoAnim),
+                    Mathf.Lerp(originalPosition.y, newCellTransform.position.y, timeIntoAnim), 0);
+                transform.localScale = new Vector3(Mathf.Lerp(originalScale.x, newCellTransform.localScale.x, timeIntoAnim),
+                    Mathf.Lerp(originalScale.y, newCellTransform.localScale.y, timeIntoAnim), 1);
+            }
         }
     }
+
+
+    GameObject collidedWith;
+
 
     //When two cells collide, merge them.
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        //cant die again
+        if (animating) return;
+
+        collidedWith = collision.collider.gameObject;
+
         //We need some way to be able to tell only one cell to create the new cell. Do this by checking
         //x position, with the person on the right surviving
         if (collision.collider.CompareTag("Cell"))
         {
-            GetComponent<BoxCollider2D>().enabled = false;
-            collision.collider.GetComponent<BoxCollider2D>().enabled = false;
+            //Right now it disable the box collider. Instead of this, change this game objects layer to be CellsDontTouch,
+            //A specific collision layer which interacts with the player but not other cells. This should allow the player to stand on merging cells
+            //while allowing merging cells to pass through each other.
+            //GetComponent<BoxCollider2D>().enabled = false;
+            int cellDontTouchLayer = LayerMask.NameToLayer("CellsDontTouch");
+            gameObject.layer = cellDontTouchLayer;
 
             Vector3 otherCellPos = collision.transform.position;
             BlockCellSplit otherCellSplitScript = collision.collider.GetComponent<BlockCellSplit>();
@@ -63,25 +91,63 @@ public class BlockCellDeath : MonoBehaviour
 
             if (transform.position.x > collision.transform.position.x)
             {
-                Destroy(collision.gameObject);
+                secondaryCell = false;
 
-                Debug.Log(blockCellSplit.color + " and " + otherCellColor);
+                Debug.Log("I got a larger x position, its " + transform.position.x + " while this other hoe got a x of " + collision.transform.position.x);
+                StartAnimation();
+
+                //OLD CODE. This script used to instant kill the other game object, then create the new cell, then destroy itself.
+                //Destroy(collision.gameObject);
                 CreateNewCell(blockCellSplit.color, otherCellColor, transform.position, otherCellPos,
                     blockCellSplit.timerStartingValue, otherCellTimer, GetComponent<BlockCellMovement>().speed, otherCellSpeed);
-                Destroy(gameObject);
+                //Destroy(gameObject);
             }
             //though if x is exactly equal use the y instead.
             else if(transform.position.x == collision.transform.position.x)
             {
                 if(transform.position.y > collision.transform.position.y)
                 {
-                    Destroy(collision.gameObject);
+                    secondaryCell = false;
+
+                    StartAnimation();
+
+                    //same as above
+                    //Destroy(collision.gameObject);
+                    CreateNewCell(blockCellSplit.color, otherCellColor, transform.position, otherCellPos,
+                        blockCellSplit.timerStartingValue, otherCellTimer, GetComponent<BlockCellMovement>().speed, otherCellSpeed);
+                    //Destroy(gameObject);
                 }
             }
 
         }
     }
 
+    Vector3 originalPosition;
+    Vector3 originalScale;
+    void StartAnimation()
+    {
+        //variables
+        animating = true;
+        timeIntoAnim = 0;
+        //Disallow splitting and moving
+        GetComponent<BlockCellSplit>().enabled = false;
+        GetComponent<BlockCellMovement>().enabled = false;
+        //Setting the positions at collision
+        originalPosition = transform.position;
+        originalScale = transform.localScale;
+    }
+
+    //For the cell which doesn't create the new neuron; the one not in charge.
+    public void GetAccessToNewlyCreatedCell(Transform newCell)
+    {
+        secondaryCell = true;
+        newCellTransform = newCell;
+
+        StartAnimation();
+    }
+
+
+    GameObject currentlyInstantiating;
     //If two blocks collide, create a new cell in between them.
     //color a comes from the cell that was on the left, color b comes from the one on the right.
     //the current color is set to grey.
@@ -93,7 +159,7 @@ public class BlockCellDeath : MonoBehaviour
         }
 
         Vector3 inBetweenPos = new Vector3((int)((cellAPos.x + cellBPos.x) * 0.5f), (int)((cellAPos.y + cellBPos.y) * 0.5f), 0);
-        GameObject currentlyInstantiating = Instantiate(PrefabManager.Instance.BlockCellPrefab, inBetweenPos, Quaternion.identity);
+        currentlyInstantiating = Instantiate(PrefabManager.Instance.BlockCellPrefab, inBetweenPos, Quaternion.identity);
 
         //this is kind of a cruddy way to do it, but 0s spread for some reason and it might take a while to figure out why.
         //Instead, invalidate 0s and set the colors to something else.
@@ -108,5 +174,14 @@ public class BlockCellDeath : MonoBehaviour
             InstantiateBlock(randomBool, 0, randomBool ? false : true, colorA, colorB, 
             (timerValueA + timerValueB) * 0.5f, blockCellSplit.timeUntilSplit, (speedA + speedB) * 0.5f);
         BlockCellsManager.Instance.blockCellsList.Add(currentlyInstantiating.transform);
+
+        //Telling the secondary cell to start animating
+        collidedWith.GetComponent<BlockCellDeath>().GetAccessToNewlyCreatedCell(currentlyInstantiating.transform);
+        newCellTransform = currentlyInstantiating.transform;
+
+        //The new block only pseudo-exists right now; it's scripts are all running and stuff but it can't collide with anything or be seen.
+        //I'm doing it like this because we still need its transform
+        currentlyInstantiating.GetComponent<BoxCollider2D>().enabled = false;
+        currentlyInstantiating.GetComponent<SpriteRenderer>().enabled = false;
     }
 }

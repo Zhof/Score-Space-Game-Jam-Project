@@ -46,6 +46,12 @@ public class BlockCellInstantiate : MonoBehaviour
         blockCellSplitScript = GetComponent<BlockCellSplit>();
         blockCellMovement = GetComponent<BlockCellMovement>();
 
+        //Pause splitting if spawning in when other cells are splitting.
+        if(blockCellSplitScript.timeUntilSplit <= blockCellSplitScript.timeGrowing)
+        {
+            blockCellSplitScript.splitsPaused = true;
+        }
+
         //whichever way this cell splits, make the cells it create split the opposite way.
         blockCellSplitScript.splitsVert = splitsVert ? false : true;
         blockCellSplitScript.color = color;

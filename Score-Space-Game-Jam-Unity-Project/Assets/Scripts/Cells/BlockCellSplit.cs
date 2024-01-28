@@ -18,16 +18,25 @@ public class BlockCellSplit : MonoBehaviour
     public int colorA;
     public int colorB;
 
-    public float timeGrowing;
+    public float timeGrowing; // how long to grow
 
     public float timerStartingValue;
     public float timeUntilSplit;
+
+    //Once a new cell has spawned, splits paused is set to true if it was created in a period where all the other
+    //Cells are in the process of splitting. In this case, skip this split by setting it back to false once time until split <= 0.
+    public bool splitsPaused = false;
 
     BlockCellMovement blockCellMovement;
 
     private void Start()
     {
         blockCellMovement = GetComponent<BlockCellMovement>();
+
+        if(timeUntilSplit <= timeGrowing)
+        {
+            splitsPaused = true;
+        }
     }
 
     private void Update()
@@ -37,14 +46,20 @@ public class BlockCellSplit : MonoBehaviour
 
         transform.localScale = Vector3.one;
         //When the cells start scaling.
-        if(timeUntilSplit <= timeGrowing)
+        if(timeUntilSplit <= timeGrowing && splitsPaused == false)
         {
             transform.localScale = ScaleFromTime();
         }
 
         if(timeUntilSplit <= 0)
         {
-            SplitCell();
+            if (splitsPaused == false)
+                SplitCell();
+            else
+            {
+                timeUntilSplit = timerStartingValue;
+                splitsPaused = false;
+            }
         }
     }
     Vector3 newScale;

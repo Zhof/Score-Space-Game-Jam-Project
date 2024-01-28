@@ -11,12 +11,12 @@ GameObject:
   - component: {fileID: 3928266661106462269}
   - component: {fileID: 3928266661106462268}
   - component: {fileID: 3928266661106462264}
+  - component: {fileID: 515934539335620345}
   - component: {fileID: 3928266661106462267}
   - component: {fileID: 3928266661106462266}
-  - component: {fileID: 515934539335620345}
   - component: {fileID: 604383191}
   - component: {fileID: 604383192}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: BlockCell
   m_TagString: Cell
   m_Icon: {fileID: 0}
@@ -102,6 +102,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d214799ec11c17346986070090a9cf79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &515934539335620345
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3928266661106462271}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 824c070cc2944834faa96deac826adad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  timeToFinishAnim: 0.4
 --- !u!114 &3928266661106462267
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -119,9 +132,10 @@ MonoBehaviour:
   color: 2
   colorA: 1
   colorB: 2
-  timeGrowing: 0.7
+  timeGrowing: 0.6
   timerStartingValue: 4
   timeUntilSplit: 4
+  splitsPaused: 0
 --- !u!114 &3928266661106462266
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -138,19 +152,6 @@ MonoBehaviour:
   speed: 2
   randomAdditionalSpeed: 0
   velocity: {x: 0, y: 0}
---- !u!114 &515934539335620345
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3928266661106462271}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 824c070cc2944834faa96deac826adad, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  blockCellSplit: {fileID: 0}
 --- !u!50 &604383191
 Rigidbody2D:
   serializedVersion: 4
