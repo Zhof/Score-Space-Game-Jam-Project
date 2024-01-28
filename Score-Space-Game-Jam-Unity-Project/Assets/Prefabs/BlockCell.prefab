@@ -119,8 +119,9 @@ MonoBehaviour:
   color: 2
   colorA: 1
   colorB: 2
-  timerStartingValue: 2.7
-  timeUntilSplit: 2.7
+  timeGrowing: 0.7
+  timerStartingValue: 4
+  timeUntilSplit: 4
 --- !u!114 &3928266661106462266
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -134,8 +135,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   randomAddSpeedPower: 0
-  speed: 2.7
+  speed: 2
   randomAdditionalSpeed: 0
+  velocity: {x: 0, y: 0}
 --- !u!114 &515934539335620345
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -148,6 +150,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 824c070cc2944834faa96deac826adad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  blockCellSplit: {fileID: 0}
 --- !u!50 &604383191
 Rigidbody2D:
   serializedVersion: 4
@@ -160,7 +163,7 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 1
+  m_Mass: 10000
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 0
@@ -193,5 +196,5 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.94, y: 0.94}
   m_EdgeRadius: 0

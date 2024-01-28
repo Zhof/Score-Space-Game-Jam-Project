@@ -4,6 +4,13 @@ using UnityEngine;
 
 public class BlockCellDeath : MonoBehaviour
 {
+    [SerializeField]
+    float timeToFinishAnim; //in seconds
+    //Because it's lerping, this is between 0 (animation start) and 1 (animation finish)
+    float timeIntoAnim;
+    bool animating;
+
+
     BlockCellSplit blockCellSplit;
 
     private void Awake()
@@ -16,6 +23,23 @@ public class BlockCellDeath : MonoBehaviour
         if (collision.CompareTag("Kill"))
         {
             Destroy(gameObject);
+        }
+    }
+
+    Vector2 positionAtAnimStart = new Vector2();
+    private void Update()
+    {
+        if(animating == false)
+        {
+            timeIntoAnim = 0;
+        }
+        else
+        {
+            if(timeIntoAnim >= 1)
+            {
+                //destroy this one
+            }
+            
         }
     }
 
@@ -34,6 +58,8 @@ public class BlockCellDeath : MonoBehaviour
             int otherCellColor = otherCellSplitScript.color;
             float otherCellTimer = otherCellSplitScript.timerStartingValue;
             float otherCellSpeed = collision.collider.GetComponent<BlockCellMovement>().speed;
+
+            BlockCellsManager.Instance.blockCellsList.Remove(transform);
 
             if (transform.position.x > collision.transform.position.x)
             {
@@ -55,12 +81,18 @@ public class BlockCellDeath : MonoBehaviour
 
         }
     }
+
     //If two blocks collide, create a new cell in between them.
     //color a comes from the cell that was on the left, color b comes from the one on the right.
     //the current color is set to grey.
     void CreateNewCell(int colorA, int colorB, Vector3 cellAPos, Vector3 cellBPos, float timerValueA, float timerValueB, float speedA, float speedB)
     {
-        Vector3 inBetweenPos = new Vector3((cellAPos.x + cellBPos.x) * 0.5f, (cellAPos.y + cellBPos.y) * 0.5f, 0);
+        if (BlockCellsManager.Instance.blockCellsList.Count > 100)
+        {
+            return;
+        }
+
+        Vector3 inBetweenPos = new Vector3((int)((cellAPos.x + cellBPos.x) * 0.5f), (int)((cellAPos.y + cellBPos.y) * 0.5f), 0);
         GameObject currentlyInstantiating = Instantiate(PrefabManager.Instance.BlockCellPrefab, inBetweenPos, Quaternion.identity);
 
         //this is kind of a cruddy way to do it, but 0s spread for some reason and it might take a while to figure out why.
@@ -75,5 +107,6 @@ public class BlockCellDeath : MonoBehaviour
         currentlyInstantiating.GetComponent<BlockCellInstantiate>().
             InstantiateBlock(randomBool, 0, randomBool ? false : true, colorA, colorB, 
             (timerValueA + timerValueB) * 0.5f, blockCellSplit.timeUntilSplit, (speedA + speedB) * 0.5f);
+        BlockCellsManager.Instance.blockCellsList.Add(currentlyInstantiating.transform);
     }
 }

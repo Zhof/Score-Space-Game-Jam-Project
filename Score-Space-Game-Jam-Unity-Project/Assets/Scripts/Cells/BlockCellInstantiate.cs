@@ -8,6 +8,13 @@ public class BlockCellInstantiate : MonoBehaviour
     BlockCellMovement blockCellMovement;
     public void InstantiateBlock(bool movesVert, int color, bool splitsVert, int colorA, int colorB, float timerStartingValue, float speed)
     {
+        if (BlockCellsManager.Instance.blockCellsList.Count > 100)
+        {
+            return;
+        }
+
+        BlockCellsManager.Instance.blockCellsList.Add(transform);
+
         blockCellSplitScript = GetComponent<BlockCellSplit>();
         blockCellMovement = GetComponent<BlockCellMovement>();
 
@@ -29,6 +36,13 @@ public class BlockCellInstantiate : MonoBehaviour
     //Independently. This allows you to sink up all of the cells together.
     public void InstantiateBlock(bool movesVert, int color, bool splitsVert, int colorA, int colorB, float timerStartingValue, float timerCurrentValue, float speed)
     {
+        if(BlockCellsManager.Instance.blockCellsList.Count > 100)
+        {
+            return;
+        }
+
+        BlockCellsManager.Instance.blockCellsList.Add(transform);
+
         blockCellSplitScript = GetComponent<BlockCellSplit>();
         blockCellMovement = GetComponent<BlockCellMovement>();
 

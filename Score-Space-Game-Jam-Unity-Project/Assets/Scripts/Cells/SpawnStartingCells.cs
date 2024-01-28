@@ -5,6 +5,16 @@ using UnityEngine;
 public class SpawnStartingCells : MonoBehaviour
 {
     [SerializeField]
+    int amountOfCellsToSpawn;
+    [SerializeField]
+    float timeToSplit;
+    [SerializeField]
+    float speed;
+    [SerializeField]
+    Transform playerTransform;
+
+
+    [SerializeField]
     GameObject blockCellPrefab;
 
     GameObject currentlyInstantiating;
@@ -15,6 +25,23 @@ public class SpawnStartingCells : MonoBehaviour
     //Color, either one or two.
     private void Start()
     {
-        
+        for(int i = 0; i < amountOfCellsToSpawn; i++)
+        {
+            currentlyInstantiating = Instantiate(blockCellPrefab);
+            bool randomVert = Random.Range(0, 2) == 1 ? true : false;
+            Vector2 randomPos = new Vector2(Random.Range(-7, 7), Random.Range(-7, 7));
+            int color = Random.Range(0, 2);
+
+            currentlyInstantiating.GetComponent<BlockCellInstantiate>().
+                InstantiateBlock(randomVert, color, randomVert ? false : true, 1, 2, timeToSplit, speed);
+            currentlyInstantiating.transform.position = randomPos;
+
+            if(i == amountOfCellsToSpawn - 1)
+            {
+                playerTransform.position = randomPos + Vector2.up;
+            }
+
+            BlockCellsManager.Instance.blockCellsList.Add(currentlyInstantiating.transform);
+        }
     }
 }

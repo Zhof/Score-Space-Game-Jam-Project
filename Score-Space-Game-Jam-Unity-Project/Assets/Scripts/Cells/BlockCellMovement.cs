@@ -15,6 +15,7 @@ public class BlockCellMovement : MonoBehaviour
     //horizontally.
     public float randomAdditionalSpeed;
 
+    public Vector2 velocity;
 
     private void Awake()
     {
@@ -31,11 +32,13 @@ public class BlockCellMovement : MonoBehaviour
     {
         if (blockCellSplitScript.movesVert)
         {
-            rb.velocity = new Vector2(randomAdditionalSpeed * randomAddSpeedPower, GetIntBasedOnColor(blockCellSplitScript.color)) * speed;
+            velocity = new Vector2(randomAdditionalSpeed * randomAddSpeedPower, GetIntBasedOnColor(blockCellSplitScript.color)) * speed;
+            rb.velocity = velocity;
         }
         else
         {
-            rb.velocity = new Vector2(GetIntBasedOnColor(blockCellSplitScript.color), randomAdditionalSpeed * randomAddSpeedPower) * speed;
+            velocity = new Vector2(GetIntBasedOnColor(blockCellSplitScript.color), randomAdditionalSpeed * randomAddSpeedPower) * speed;
+            rb.velocity = velocity;
         }
     }
 

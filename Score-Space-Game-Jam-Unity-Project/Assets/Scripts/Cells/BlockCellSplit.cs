@@ -18,6 +18,8 @@ public class BlockCellSplit : MonoBehaviour
     public int colorA;
     public int colorB;
 
+    public float timeGrowing;
+
     public float timerStartingValue;
     public float timeUntilSplit;
 
@@ -32,10 +34,32 @@ public class BlockCellSplit : MonoBehaviour
     {
         timeUntilSplit -= Time.deltaTime;
 
+
+        transform.localScale = Vector3.one;
+        //When the cells start scaling.
+        if(timeUntilSplit <= timeGrowing)
+        {
+            transform.localScale = ScaleFromTime();
+        }
+
         if(timeUntilSplit <= 0)
         {
             SplitCell();
         }
+    }
+    Vector3 newScale;
+    Vector3 ScaleFromTime()
+    {
+        newScale = Vector3.one;
+        if (splitsVert)
+        {
+            newScale.y = Mathf.Lerp(1, 2, 1 - (timeUntilSplit / timeGrowing));
+        }
+        else
+        {
+            newScale.x = Mathf.Lerp(1, 2, 1 - (timeUntilSplit / timeGrowing));
+        }
+        return newScale;
     }
 
     GameObject currentlyInstantiating;
@@ -51,6 +75,7 @@ public class BlockCellSplit : MonoBehaviour
             currentlyInstantiating = Instantiate(PrefabManager.Instance.BlockCellPrefab, new Vector3(0, -0.55f, 0) + transform.position, Quaternion.identity);
             InstantiateNewBlock(false);
             //destroy self
+            BlockCellsManager.Instance.blockCellsList.Remove(transform);
             Destroy(gameObject);
         }
         else
@@ -62,8 +87,10 @@ public class BlockCellSplit : MonoBehaviour
             currentlyInstantiating = Instantiate(PrefabManager.Instance.BlockCellPrefab, new Vector3(-0.55f, 0, 0) + transform.position, Quaternion.identity);
             InstantiateNewBlock(false);
             //destroy self
+            BlockCellsManager.Instance.blockCellsList.Remove(transform);
             Destroy(gameObject);
         }
+
     }
     void InstantiateNewBlock(bool usesColorA)
     {
