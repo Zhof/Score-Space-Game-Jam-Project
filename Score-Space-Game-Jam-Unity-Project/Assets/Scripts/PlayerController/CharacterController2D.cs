@@ -85,7 +85,7 @@ public class CharacterController2D : MonoBehaviour
 		if (m_Grounded || m_AirControl)
 		{
 
-			// If crouching
+			/*// If crouching
 			if (crouch)
 			{
 				if (!m_wasCrouching)
@@ -111,7 +111,7 @@ public class CharacterController2D : MonoBehaviour
 					m_wasCrouching = false;
 					OnCrouchEvent.Invoke(false);
 				}
-			}
+			}*/
 
 			// Move the character by finding the target velocity
 			Vector3 targetVelocity = new Vector2(move * 10f, m_Rigidbody2D.velocity.y);

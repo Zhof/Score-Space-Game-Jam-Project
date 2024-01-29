@@ -29,17 +29,17 @@ public class SpawnStartingCells : MonoBehaviour
         {
             currentlyInstantiating = Instantiate(blockCellPrefab);
             bool randomVert = Random.Range(0, 2) == 1 ? true : false;
-            Vector2 randomPos = new Vector2(Random.Range(-7, 7), Random.Range(-7, 7));
+            Vector2 randomPos = new Vector2(Random.Range(-7, 7), Random.Range(-5, 5));
             int color = Random.Range(0, 2);
 
             currentlyInstantiating.GetComponent<BlockCellInstantiate>().
                 InstantiateBlock(randomVert, color, randomVert ? false : true, 1, 2, timeToSplit, speed);
             currentlyInstantiating.transform.position = randomPos;
 
-            if(i == amountOfCellsToSpawn - 1)
+            /*if(i == amountOfCellsToSpawn - 1)
             {
                 playerTransform.position = randomPos + Vector2.up;
-            }
+            }*/
 
             BlockCellsManager.Instance.blockCellsList.Add(currentlyInstantiating.transform);
         }

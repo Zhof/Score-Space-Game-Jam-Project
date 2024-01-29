@@ -20,16 +20,21 @@ public class BlockCellDeath : MonoBehaviour
     private void Awake()
     {
         blockCellSplit = GetComponent<BlockCellSplit>();
+
+        bugFixTimer = 0;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Kill"))
+        if (collision.CompareTag("Kill") || collision.CompareTag("KillCells"))
         {
             Destroy(gameObject);
         }
     }
 
+    //the black hole bug is caused by cells not destroying themselves after making a new thing.
+    //This timer counts up and if the cell has been alive too long it gets rid of it.
+    float bugFixTimer;
     private void Update()
     {
         if(animating == false)
@@ -49,12 +54,17 @@ public class BlockCellDeath : MonoBehaviour
             else
             {
                 timeIntoAnim += Time.deltaTime * (1 / timeToFinishAnim);
+                bugFixTimer += Time.deltaTime * (1 / timeToFinishAnim);
 
                 transform.position = new Vector3(Mathf.Lerp(originalPosition.x, newCellTransform.position.x, timeIntoAnim),
                     Mathf.Lerp(originalPosition.y, newCellTransform.position.y, timeIntoAnim), 0);
                 transform.localScale = new Vector3(Mathf.Lerp(originalScale.x, newCellTransform.localScale.x, timeIntoAnim),
                     Mathf.Lerp(originalScale.y, newCellTransform.localScale.y, timeIntoAnim), 1);
             }
+        }
+        if(bugFixTimer > 1.1f)
+        {
+            Destroy(gameObject);
         }
     }
 
