@@ -18,6 +18,15 @@ public class BlockCellsManager : MonoBehaviour
         }
     }
 
+    public void DeleteAll()
+    {
+        foreach(Transform t in blockCellsList)
+        {
+            Destroy(t.gameObject);
+        }
+        blockCellsList.Clear();
+    }
+
     private static BlockCellsManager m_Instance = null;
     public static BlockCellsManager Instance
     {

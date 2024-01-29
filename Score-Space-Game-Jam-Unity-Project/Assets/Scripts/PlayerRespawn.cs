@@ -6,9 +6,8 @@ using UnityEngine.UI;
 
 public class PlayerRespawn : MonoBehaviour
 {
-    [SerializeField]
-    int maxLives = 3;
-    int lives;
+    public int maxLives = 3;
+    public int lives;
 
     [SerializeField]
     Text livesText;
@@ -32,7 +31,7 @@ public class PlayerRespawn : MonoBehaviour
         gameOverCanvas.SetActive(false);
     
         lives = maxLives;
-        livesText.text = lives.ToString();
+        livesText.text = ("Lives: " + (lives - 1).ToString());
 
         scoreManager.scoreAndDifficultyIncreaseDead = true;
 
@@ -73,7 +72,7 @@ public class PlayerRespawn : MonoBehaviour
 
             //reenable eventually
             lives--;
-            livesText.text = lives.ToString();
+            livesText.text = ("Lives: " + (lives - 1).ToString());
         }
         else
         {

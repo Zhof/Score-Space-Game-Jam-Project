@@ -25,7 +25,12 @@ public class SpawnStartingCells : MonoBehaviour
     //Color, either one or two.
     private void Start()
     {
-        for(int i = 0; i < amountOfCellsToSpawn; i++)
+        SpawnNewCells();
+    }
+
+    public void SpawnNewCells()
+    {
+        for (int i = 0; i < amountOfCellsToSpawn; i++)
         {
             currentlyInstantiating = Instantiate(blockCellPrefab);
             bool randomVert = Random.Range(0, 2) == 1 ? true : false;
