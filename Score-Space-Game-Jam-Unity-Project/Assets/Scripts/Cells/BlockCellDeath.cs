@@ -158,7 +158,8 @@ public class BlockCellDeath : MonoBehaviour
             return;
         }
 
-        Vector3 inBetweenPos = new Vector3((int)((cellAPos.x + cellBPos.x) * 0.5f), (int)((cellAPos.y + cellBPos.y) * 0.5f), 0);
+        Vector3 inBetweenPos = new Vector3(Mathf.RoundToInt((cellAPos.x + cellBPos.x) * 0.5f), 
+            Mathf.RoundToInt((cellAPos.y + cellBPos.y) * 0.5f), 0);
         currentlyInstantiating = Instantiate(PrefabManager.Instance.BlockCellPrefab, inBetweenPos, Quaternion.identity);
 
         //this is kind of a cruddy way to do it, but 0s spread for some reason and it might take a while to figure out why.
